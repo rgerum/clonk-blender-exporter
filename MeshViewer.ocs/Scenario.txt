@@ -6,9 +6,6 @@ Difficulty=0
 MaxPlayer=1
 NoInitialize=true
 
-[Definitions]
-Definition1=
-
 [Player1]
 Crew=ViewControl=1
 
