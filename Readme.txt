@@ -1,5 +1,6 @@
- 
-***** Installation (Folder: BlenderAddon) *****
+# Your title here... #
+## Installation (Folder: BlenderAddon) ##
+
 
 - install Blender (www.blender.org)
 - copy the files from the folder BlenderAddon to:
@@ -12,7 +13,7 @@
     HINT: You can also use the search box to look for an addon containing "Clonk".
     
     
-***** Test the Exporter (TestBlenderFile) *****
+## Test the Exporter (TestBlenderFile) ##
 
 - Open the Dice.blend tile
 - Make sure the dice object is selected
@@ -23,7 +24,7 @@
 The files Graphics.mesh, Scene.material, Dice.png and Dice.skeleton should be created in your export directory.
 
 
-***** Test the Exported Mesh (MeshViewer.ocs) *****
+## Test the Exported Mesh (MeshViewer.ocs) ##
 
 - Copy MeshViewer.ocs into your OpenClonk directory
 - Copy your exported files (Graphics.mesh, Scene.material, Dice.png, Dice.skeleton)
