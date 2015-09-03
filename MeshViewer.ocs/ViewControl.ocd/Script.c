@@ -37,7 +37,7 @@ local animation_counter = 0;
 func NextAnimation()
 {
 	animation_counter += 1;
-	var anims = target_id->GetAnimations();
+	var anims = target_id->GetAnimationList();
 	if(GetLength(anims) <= animation_counter)
 	   animation_counter = 0;
 	var anim = anims[animation_counter];
@@ -48,7 +48,7 @@ func NextAnimation()
 func PrevAnimation()
 {
 	animation_counter -= 1;
-	var anims = target_id->GetAnimations();
+	var anims = target_id->GetAnimationList();
 	if(animation_counter < 0)
 		animation_counter = GetLength(anims)-1;
 	var anim = anims[animation_counter];
