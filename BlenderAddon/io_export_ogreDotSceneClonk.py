@@ -3425,12 +3425,13 @@ class _OgreCommonExport_(_TXML_):
         bpy.ops.object.transform_apply(location=True)
         bpy.ops.object.transform_apply(scale=True)
         for obj in bpy.context.selected_objects:
-            parent = obj.parent
-            parent.select = True
-            bpy.ops.object.transform_apply(rotation=True)
-            bpy.ops.object.transform_apply(location=True)
-            bpy.ops.object.transform_apply(scale=True)
-            parent.select = False
+            if obj.parent != None:
+                parent = obj.parent
+                parent.select = True
+                bpy.ops.object.transform_apply(rotation=True)
+                bpy.ops.object.transform_apply(location=True)
+                bpy.ops.object.transform_apply(scale=True)
+                parent.select = False
 
         print("Processing Scene")
         prefix = url.split('.')[0]
