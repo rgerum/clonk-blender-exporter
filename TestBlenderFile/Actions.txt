@@ -1,0 +1,4 @@
+[Action]
+Name=OpenCloseLid
+
+[End]

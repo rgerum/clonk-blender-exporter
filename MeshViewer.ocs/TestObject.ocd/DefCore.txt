@@ -1,0 +1,8 @@
+[DefCore]
+id=TestObject
+Version=6,0
+Category=C4D_Living
+Width=2
+Height=2
+Offset=-1,-1
+Vertices=1

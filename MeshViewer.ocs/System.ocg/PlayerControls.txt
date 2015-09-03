@@ -1,0 +1,82 @@
+[ControlDefs]
+
+	[ControlDef]
+	Identifier=ScaleUp
+	GUIName=ScaleUp
+	
+	[ControlDef]
+	Identifier=ScaleDown
+	GUIName=ScaleDown
+	
+	[ControlDef]
+	Identifier=Reset
+	GUIName=Reset
+	
+	[ControlDef]
+	Identifier=Aim
+	DefaultDisabled=1
+	CoordinateSpace=Viewport
+	
+	[ControlDef]
+	Identifier=Use
+	Hold=1
+	SendCursorPos=1
+	CoordinateSpace=Viewport
+	
+	[ControlDef]
+	Identifier=Next
+	
+	[ControlDef]
+	Identifier=Prev
+	
+
+[ControlSets]
+
+	[ControlSet]
+	Name=WASD_Hotkeys_IntQueue_MouseCon_
+	GUIName=Keyboard and Mouse
+	Keyboard=1
+	Mouse=1
+	Gamepad=0
+	
+		[Assignment]
+		Key=Mouse1Wheel1Up
+		Priority=200		
+		Control=ScaleUp
+#		Group=1
+
+		[Assignment]
+		Key=Mouse1Wheel1Down
+		Priority=200
+		Control=ScaleDown
+#		Group=1
+
+		[Assignment]
+		Key=Space
+		Priority=200
+		Control=Reset
+		
+		[Assignment]
+		Key=Q
+		Control=Prev
+		
+		[Assignment]
+		Key=E
+		Control=Next
+		
+	[ControlSet]
+	Name=DVORAK_Hotkeys_IntQueue_MouseCon_
+	GUIName=DVORAK keyboard and mouse
+	Keyboard=1
+	Mouse=1
+	Gamepad=0
+	
+		# Backpack
+		[Assignment]
+		Key=Apostrophe
+		Control=Backpack
+		
+		# Turbo
+		[Assignment]
+		Key=J
+		Control=Turbo
