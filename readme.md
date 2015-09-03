@@ -1,4 +1,6 @@
-# Your title here... #
+# Blender Exporter #
+Download newest repository version: [download](bitbucket.org/randrian/clonkblenderogreexporter/get/tip.zip)
+
 ## Installation (Folder: BlenderAddon) ##
 
 
