@@ -4603,57 +4603,63 @@ class Skeleton(object):
         # CLONK: Look for an "Actions.txt" in the directory of the current file
         act_filename = os.path.join(os.path.dirname(bpy.data.filepath),"Actions.txt")
         file_exists = os.path.isfile(act_filename)
-        if file_exists: # assume all is controled by a handmade Actions.txt
+        if file_exists or not arm.animation_data: # assume all is controled by a handmade Actions.txt
           
             animationList = []
             animation_export_groups = []
             
-            # Open Actions.txt file
-            actlist = open(act_filename, "r");
-            Action_Keys = {"Name":str,"ExportName":str,"Start":int,"End":int,"Group":str}
-            Group_Keys  = {"Name":str,"Exclude":str,"Include":str}
-            mode = 0
-            # Read file
-            for line in actlist:
-                # Strip lines and ignore comments or blank lines
-                line = line.strip()
-                if len(line) == 0 or line[0] == "#":
-                   continue
-                # Read in line in Action block
-                if mode == "Action":
-                    pair = line.split("=")
-                    if len(pair) == 2 and pair[0] in Action_Keys:
-                        animationList[-1][pair[0]] = Action_Keys[pair[0]](pair[1])
-                        continue
-                    if line[0] != "[":
-                        print("ERROR: unreadable line "+line)
-                        continue
-                # Read in line in Group block
-                if mode == "Group":
-                    pair = line.split("=")
-                    if len(pair) == 2 and pair[0] in Group_Keys:
-                        if pair[0] == "Exclude":
-                            animation_export_groups[-1]["Exclude"].append(pair[1])
-                        elif pair[0] == "Include":
-                            animation_export_groups[-1]["Include"].append(pair[1])
-                        else:
-                            animation_export_groups[-1][pair[0]] = Group_Keys[pair[0]](pair[1])
-                        continue
-                    if line[0] != "[":
-                        print("ERROR: unreadable line "+line)
-                        continue
+            if file_exists:
+                print("AnimationExport: using Action.txt")
+                # Open Actions.txt file
+                actlist = open(act_filename, "r");
+                Action_Keys = {"Name":str,"ExportName":str,"Start":int,"End":int,"Group":str}
+                Group_Keys  = {"Name":str,"Exclude":str,"Include":str}
+                mode = 0
+                # Read file
+                for line in actlist:
+                    # Strip lines and ignore comments or blank lines
+                    line = line.strip()
+                    if len(line) == 0 or line[0] == "#":
+                       continue
+                    # Read in line in Action block
+                    if mode == "Action":
+                        pair = line.split("=")
+                        if len(pair) == 2 and pair[0] in Action_Keys:
+                            animationList[-1][pair[0]] = Action_Keys[pair[0]](pair[1])
+                            continue
+                        if line[0] != "[":
+                            print("ERROR: unreadable line "+line)
+                            continue
+                    # Read in line in Group block
+                    if mode == "Group":
+                        pair = line.split("=")
+                        if len(pair) == 2 and pair[0] in Group_Keys:
+                            if pair[0] == "Exclude":
+                                animation_export_groups[-1]["Exclude"].append(pair[1])
+                            elif pair[0] == "Include":
+                                animation_export_groups[-1]["Include"].append(pair[1])
+                            else:
+                                animation_export_groups[-1][pair[0]] = Group_Keys[pair[0]](pair[1])
+                            continue
+                        if line[0] != "[":
+                            print("ERROR: unreadable line "+line)
+                            continue
+                    
+                    # Test if we have to start a new block
+                    if line == "[Action]":
+                        mode = "Action"
+                        animationList.append( {"Name": "", "ExportName": "", "Start": -1, "End":-1, "Group": ""} )
+    
+                    if line == "[Group]":
+                        mode = "Group"
+                        animation_export_groups.append( {"Name": "", "Exclude": [], "Include": [] } )
                 
-                # Test if we have to start a new block
-                if line == "[Action]":
-                    mode = "Action"
-                    animationList.append( {"Name": "", "ExportName": "", "Start": -1, "End":-1, "Group": ""} )
-
-                if line == "[Group]":
-                    mode = "Group"
-                    animation_export_groups.append( {"Name": "", "Exclude": [], "Include": [] } )
-            
-            # Finished with reading the file
-            actlist.close()
+                # Finished with reading the file
+                actlist.close()
+            else:
+                print("AnimationExport: using all actions")
+                animationList = [{"Name": act, "ExportName": "", "Start": -1, "End":-1, "Group": ""} for act in bpy.data.actions if act[0] != "_"]
+                
             
             # Test if we have a second control armature
             if "CONTROL_body" in bpy.data.objects:
@@ -4793,6 +4799,7 @@ class Skeleton(object):
                     arm2.animation_data.action = bpy.data.actions["RESET"]            
             
         elif not arm.animation_data or (arm.animation_data and not arm.animation_data.nla_tracks):  # assume animated via constraints and use blender timeline.
+            print("AnimationExport: using blender timeline")
             anims = doc.createElement('animations'); root.appendChild( anims )
             anim = doc.createElement('animation'); anims.appendChild( anim )
             tracks = doc.createElement('tracks'); anim.appendChild( tracks )
@@ -4851,6 +4858,7 @@ class Skeleton(object):
                         scale.setAttribute('z', '%6f' %z)
 
         elif arm.animation_data:
+            print("AnimationExport: using NLA stripes")
             anims = doc.createElement('animations'); root.appendChild( anims )
             if not len( arm.animation_data.nla_tracks ):
                 Report.warnings.append('you must assign an NLA strip to armature (%s) that defines the start and end frames' %arm.name)

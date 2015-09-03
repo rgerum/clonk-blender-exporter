@@ -1,4 +1,0 @@
-[Action]
-Name=OpenCloseLid
-
-[End]
