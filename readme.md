@@ -5,7 +5,7 @@ Download newest repository version: [download](bitbucket.org/randrian/clonkblend
 
 
 - install Blender (www.blender.org)
-- copy the files from the folder BlenderAddon to:
+- copy the `io_clonk` folder from the folder BlenderAddon to:
 
     Linux: `~/.config/blender/[version]/scripts/addons/`
 
