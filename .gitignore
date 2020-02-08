@@ -1,4 +1,4 @@
-syntax: glob
 *__pycache__*
-*/.idea/*
+.idea/
 *.directory
+export/

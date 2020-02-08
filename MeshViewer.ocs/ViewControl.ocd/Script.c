@@ -21,7 +21,6 @@ public func Initialize()
 	SetPosition(LandscapeWidth()/2, LandscapeHeight()/2);
 	AddEffect("Rotation", this, 1, 1, this);
 	SetPlayerControlEnabled(0, CON_Aim, true);
-	SetAnimation("turn");
 }
 
 func SetAnimation(name, speed)
