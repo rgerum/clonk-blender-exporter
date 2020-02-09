@@ -16,10 +16,13 @@ When the exporter is loaded and a mesh object is selected in Blender, an options
 You can specify an `Export Mesh Name` which is as default `Graphics` as OpenClonk expects .mesh files to be called `Graphics.mesh`. And you can specify an `Export Skeleton Name`, which is the name for the .skeleton file.
 
 ### XML Converter
-There are two types of mesh files .mesh.xml and .mesh. What is the difference? The exporter writes directly .mesh.xml 
-files as these are just plain text files which can be easily generated. But for loading in Clonk they are unfortunately inefficient as they would take a long time to load. Therefore, they are converted to the binary .mesh format using the OgreXMLConverter. The exporter comes with a windows binary of this software to allow for an easy setup of the exporter. The exporter first tries to look for an installed version of the converter. If it does not find one, it looks in the subfolder `scripts/xml_converter` for the file (the default location from the repository). If you want to move youre .blend file you can also store a copy of the xml converter directly next to your .blend file.
+There are two types of mesh files .mesh.xml and .mesh. What is the difference?
 
-If you use windows, the exporter will try to call the xml converter using wine, which should work fine, too.
+The exporter writes directly .mesh.xml files as these are just plain text files which can be easily generated. But for loading in Clonk they are unfortunately inefficient as they would take a long time to load. Therefore, they are converted to the binary .mesh format using the OgreXMLConverter.
+
+The exporter comes with a Windows binary of this software to allow for an easy setup of the exporter. The exporter first tries to look for an installed version of the converter. If it does not find one, it looks in the subfolder `scripts/xml_converter` for the file (the default location from the repository). If you want to move youre .blend file you can also store a copy of the xml converter directly next to your .blend file.
+
+If you use Linux, the exporter will try to call the xml converter using wine, which should work fine, too.
 
 ### Exporting Animations
 TODO
@@ -30,4 +33,8 @@ Material files are currently generated with default settings. The materials name
 *Note: as material names share a global namespace in OpenClonk, ensure that your material name is unique, e.g. by prefixing it with the object's name.*
 
 ### Mesh Viewer
-TODO
+The exporter comes with simple MeshViewer to test quickly if the object shows up correctly in OpenClonk.
+
+Therefore, copy your files in the folder`MeshViewer.ocs/TestObject.ocd` (the `DefCore.txt` should always stay there, the other files should be only there for the current mesh). Then you can start the scenario `MeshViewer.ocs` (e.g. wih the command `openclonk MeshViewer.ocs`).
+
+Over a gray background your mesh should now be displayed. You can use the `WASD` keys to rotate the mesh, the mouse wheel to zoom in and the keys `Q` and `E` to cycle through all the animation. Hit `SPACE` to reset the view.
