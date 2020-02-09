@@ -44,6 +44,132 @@ def applyTransformation(ob, trans):
     print(ob.location)
     print(ob.rotation_quaternion)
  
+ 
+# material properties
+def MaterialChanged(mat, context):
+    for i in range(4):
+        mat.diffuse_color[i] = mat.clonkDiffuse[i]
+    if mat.clonkTexture is None:
+        mat.use_nodes = False
+    else:
+        mat.use_nodes = True
+        for node in mat.node_tree.nodes:
+            image = getattr(node, "image", None)
+            if image is not None:
+                node.image = mat.clonkTexture
+                break
+        else:
+            if len(mat.node_tree.nodes):
+                output_node = mat.node_tree.nodes[0]
+            else:
+                output_node = mat.node_tree.nodes.new(type='ShaderNodeOutputMaterial')
+            if len(mat.node_tree.nodes) > 1:
+                diffuse_node = mat.node_tree.nodes[1]
+            else:  
+                diffuse_node = mat.node_tree.nodes.new(type="ShaderNodeBsdfDiffuse")
+            if len(mat.node_tree.nodes) > 2:
+                image_node = mat.node_tree.nodes[2]
+            else:  
+                image_node = mat.node_tree.nodes.new(type="ShaderNodeTexImage")
+            mat.node_tree.links.new(diffuse_node.outputs[0], output_node.inputs[0])
+            mat.node_tree.links.new(image_node.outputs[0], diffuse_node.inputs[0])
+            image_node.image = mat.clonkTexture
+            print("new nodes needed")
+    for area in bpy.context.screen.areas:
+        if area.type == 'IMAGE_EDITOR' :
+            area.spaces.active.image = mat.clonkTexture
+    print(mat, context)
+    
+bpy.types.Material.clonkAmbient = bpy.props.FloatVectorProperty(
+    name="ambient", 
+    subtype='COLOR', 
+    min=0,
+    max=1,
+    size=4,
+    default=[0.5,0.5,0.5,1.0])
+bpy.types.Material.clonkDiffuse = bpy.props.FloatVectorProperty(
+    name="diffuse", 
+    subtype='COLOR', 
+    min=0,
+    max=1,
+    size=4,
+    update=MaterialChanged,
+    default=[1.0,1.0,1.0,1.0])
+bpy.types.Material.clonkSpecular = bpy.props.FloatVectorProperty(
+    name="specular", 
+    subtype='COLOR', 
+    min=0,
+    max=1,
+    size=4,
+    default=[0.0,0.0,0.0,1.0])
+bpy.types.Material.clonkSpecularSize = bpy.props.IntProperty(
+    name="specular size", 
+    min=1,
+    max=255,
+    default=12)
+bpy.types.Material.clonkEmissive = bpy.props.FloatVectorProperty(
+    name="emissive", 
+    subtype='COLOR', 
+    min=0,
+    max=1,
+    size=4,
+    default=[0.0,0.0,0.0,1.0])
+bpy.types.Material.clonkReceiveShadows = bpy.props.BoolProperty(
+    name="receive_shadows", 
+    default=True)    
+bpy.types.Material.clonkTexture = bpy.props.PointerProperty(
+    type=bpy.types.Image,
+    name="texture", 
+    update=MaterialChanged,
+    )
+    
+class ClonkImageLoadOperator(bpy.types.Operator):
+
+    """Create render for all chracters"""
+    bl_idname = "clonk.add_image_texture"
+    bl_label = "Open Image"
+    bl_options = {'REGISTER'}
+
+    # Define this to tell 'fileselect_add' that we want a directoy
+    filepath = bpy.props.StringProperty()
+
+    def execute(self, context):
+        mat = context.object.active_material
+        mat.clonkTexture = bpy.data.images.load(self.filepath)
+        print("Selected dir: '" + self.filepath + "'")
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        # Open browser, take reference to 'self' read the path to selected
+        # file, put path in predetermined self fields.
+        # See: https://docs.blender.org/api/current/bpy.types.WindowManager.html#bpy.types.WindowManager.fileselect_add
+        context.window_manager.fileselect_add(self)
+        # Tells Blender to hang on for the slow user input
+        return {'RUNNING_MODAL'}
+
+bpy.utils.register_class(ClonkImageLoadOperator)   
+    
+class MaterialPanel(bpy.types.Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "material"
+    bl_label = "Clonk Material"
+     
+    def draw(self, context):
+        mat = context.material
+        self.layout.prop(mat, 'clonkReceiveShadows')
+        self.layout.prop(mat, 'clonkAmbient')
+        self.layout.prop(mat, 'clonkDiffuse')        
+        self.layout.prop(mat, 'clonkSpecular')        
+        self.layout.prop(mat, 'clonkSpecularSize')        
+        self.layout.prop(mat, 'clonkEmissive')        
+        row = self.layout.row()
+        row.prop(mat, 'clonkTexture')
+        row.operator("clonk.add_image_texture", icon="FILE_FOLDER", text="")
+
+bpy.utils.register_class(MaterialPanel)
+ 
 # Define an RNA prop for every object
 bpy.types.Object.clonkExportActionFile = bpy.props.StringProperty(
     name="Action.txt",
@@ -285,7 +411,10 @@ except KeyError:
 
 def my_handler(scene):
     # get the currently selected object
-    ob = bpy.context.object
+    try:
+        ob = bpy.context.object
+    except AttributeError:
+        return
 
     # test if the Armature and the CONTROL_body have the same action
     try:

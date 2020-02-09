@@ -21,6 +21,15 @@ class Block:
         self.fp.write("}\n")
         
     
+def printValues(*args):
+    all_values = []
+    for arg in args:
+        try:
+            all_values += list(arg)
+        except TypeError:
+            all_values += list([arg])
+    return " ".join(["%.2f" % val for val in all_values])
+
 
 def writeMaterials(filename, mats):
     file = Path(filename)
@@ -30,20 +39,20 @@ def writeMaterials(filename, mats):
         for mat_name in mats:
             mat = bpy.data.materials[mat_name]
             with Block("material "+mat_name, fp):
-                fp.write("receive_shadows on\n")
+                if mat.clonkReceiveShadows:
+                    fp.write("receive_shadows on\n")
                 with Block("technique", fp):
                     with Block("pass", fp):
-                        fp.write("ambient 0.5 0.5 0.5 1.0\n")
-                        fp.write("diffuse 1.0 1.0 1.0 1.0\n")
-                        fp.write("specular 0.0 0.0 0.0 1.0 1.0\n")
-                        fp.write("emissive 0.0 0.0 0.0 1.0\n")
-                        for node in mat.node_tree.nodes:
-                            image = getattr(node, "image", None)
-                            if image is not None:
-                                with Block("texture_unit", fp):
-                                    fp.write(f"texture {image.name}\n")
-                                    fp.write("tex_address_mode wrap\n")
-                                    fp.write("filtering trilinear\n")
-                                    shutil.copy(image.filepath.replace("//", str(working_directory)+"/"),
+                        fp.write("ambient "+printValues(mat.clonkAmbient)+"\n")
+                        fp.write("diffuse "+printValues(mat.clonkDiffuse)+"\n")
+                        fp.write("specular "+printValues(mat.clonkSpecular, mat.clonkSpecularSize)+"\n")
+                        fp.write("emissive "+printValues(mat.clonkEmissive)+"\n")
+                        if mat.clonkTexture is not None:
+                            image = mat.clonkTexture
+                            with Block("texture_unit", fp):
+                                fp.write(f"texture {image.name}\n")
+                                fp.write("tex_address_mode wrap\n")
+                                fp.write("filtering trilinear\n")
+                                shutil.copy(image.filepath.replace("//", str(working_directory)+"/"),
                                                 file.parent / image.name)
 				
