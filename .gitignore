@@ -1,4 +1,12 @@
 *__pycache__*
 .idea/
 *.directory
-export/
+*.blend1
+*.blend2
+/export/
+MeshViewer.ocs/TestObject.ocd/*.skeleton
+MeshViewer.ocs/TestObject.ocd/*.mesh
+MeshViewer.ocs/TestObject.ocd/*.xml
+MeshViewer.ocs/TestObject.ocd/*.png
+MeshViewer.ocs/TestObject.ocd/*.jpg
+MeshViewer.ocs/TestObject.ocd/*.material

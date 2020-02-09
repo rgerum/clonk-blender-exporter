@@ -16,7 +16,7 @@ local target_id = TestObject;
 
 public func Initialize()
 {
-	SetGraphics(0, target_id);
+	SetGraphics("", target_id);
 	SetAction("Float");
 	SetPosition(LandscapeWidth()/2, LandscapeHeight()/2);
 	AddEffect("Rotation", this, 1, 1, this);

@@ -6,6 +6,9 @@ import mathutils
 import math
 import json
 import os
+from pathlib import Path
+from report import Report
+import importlib
 
 def Trans_Identity():
     return mathutils.Matrix()
@@ -109,10 +112,13 @@ class OBJECT_OT_Button(bpy.types.Operator):
                ob = ob.children[0]
                
         import mesh
-        from report import Report
-        import importlib
         importlib.reload(mesh)
-        mesh.dot_mesh(ob, os.path.dirname(bpy.data.filepath)+"/export", overwrite=True)
+        target_folder = Path(bpy.data.filepath).parent / "export"
+        materials = mesh.dot_mesh(ob, target_folder, overwrite=True)
+        
+        import material
+        importlib.reload(material)
+        material.writeMaterials(target_folder / "Scene.material", materials)
         Report.show()
         return{'FINISHED'}
     
