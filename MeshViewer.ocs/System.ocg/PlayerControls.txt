@@ -40,13 +40,13 @@
 	Gamepad=0
 	
 		[Assignment]
-		Key=Mouse1Wheel1Up
+		Key=Mouse0Wheel1Up
 		Priority=200		
 		Control=ScaleUp
 #		Group=1
 
 		[Assignment]
-		Key=Mouse1Wheel1Down
+		Key=Mouse0Wheel1Down
 		Priority=200
 		Control=ScaleDown
 #		Group=1
