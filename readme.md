@@ -25,7 +25,19 @@ The exporter comes with a Windows binary of this software to allow for an easy s
 If you use Linux, the exporter will try to call the xml converter using wine, which should work fine, too.
 
 ### Exporting Animations
-TODO
+For your mesh to feature animations, you need an armature linked with the object (hold `Shift`, select object and armature and press `Ctrl+P` and selection `Armature Deform`). Then your mesh needs to assign the vertices to vertex groups with the bone names.
+
+For more information on Armature see https://docs.blender.org/manual/en/2.81/animation/armatures/skinning/parenting.html
+
+To create animations, use the `Dope Sheet` window (e.g. `Shift+F12`) and select the mode `Action Editor` (the default is `Dope Sheet` so this is displayed in the dropdown menu). There you can create an Action for each animation you want to export. Actions are composed of key frames which you add at different time points.
+
+https://docs.blender.org/manual/en/2.81/editors/dope_sheet/action.html
+
+The exporter tries to export all of these Actions. The frame range is defined by the key frames.
+
+To overwrite the defaults, in the 3D Viewport window right next to the `Export Mesh` button, there is a menu to define the properties of the current Action, wether to export it, if it should be exported using a different name or a different range of frames.
+
+*Note: if you have multiple actions, you have to tell Blender not to discard when saving the currently unused actions. Therefore, you have to activate the button with the savety pin right next to the actions name.*
 
 ### Material files
 Material files are currently generated with default settings. The materials name is defined by the materials assigened to the object in Blender. If the material contains a node with a texture, the texture is added to the exported material definition.
