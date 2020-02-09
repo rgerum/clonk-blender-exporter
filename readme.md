@@ -41,7 +41,7 @@ To overwrite the defaults, in the 3D Viewport window right next to the `Export M
 
 
 ## Material files
-Material files are currently generated with default settings. The materials name is defined by the materials assigened to the object in Blender. If the material contains a node with a texture, the texture is added to the exported material definition.
+The exporter only uses material properties defined in the panel "Clonk Material" in the Material menu. Therefore, it is best to not tought the other material properties that Blender offerst, as these do not have any effect on the exported material. When you select a texture image, you can use the "UV Editor" to define on which parts of the mesh the texture is mapped.
 
 *Note: as material names share a global namespace in OpenClonk, ensure that your material name is unique, e.g. by prefixing it with the object's name.*
 
