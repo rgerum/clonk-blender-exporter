@@ -3,7 +3,7 @@ import bpy
 Report = bpy.data.texts["report.py"].as_module().Report
 xml = bpy.data.texts["xml_simple.py"].as_module()
 util = bpy.data.texts["util.py"].as_module()
-config = bpy.data.texts["config.py"].as_module()
+config = bpy.data.texts["config.py"].as_module().config
 
 
 def dot_mesh(ob, path, force_name=None, **kwargs):
@@ -53,7 +53,7 @@ def dot_mesh(ob, path, force_name=None, **kwargs):
             if mod.type in 'ARMATURE ARRAY'.split(): rem.append(mod)
         for mod in rem: copy.modifiers.remove(mod)
         # bake mesh
-        mesh = copy.to_mesh(bpy.context.depsgraph, apply_modifiers=True)  # collapse
+        mesh = copy.to_mesh()#bpy.context.evaluated_depsgraph_get(), apply_modifiers=True)  # collapse
         mesh.calc_loop_triangles()
     else:
         copy = ob
@@ -407,8 +407,8 @@ def dot_mesh(ob, path, force_name=None, **kwargs):
             # bpy.context.scene.objects.unlink(copy)
             copy.user_clear()
             bpy.data.objects.remove(copy)
-            mesh.user_clear()
-            bpy.data.meshes.remove(mesh)
+            #mesh.user_clear()
+            #bpy.data.meshes.remove(mesh)
             del copy
             del mesh
         del _remap_verts_

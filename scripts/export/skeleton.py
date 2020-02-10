@@ -478,7 +478,7 @@ class Skeleton(object):
 
         # Look for an "Actions.txt" in the directory of the current file
         animationList, animation_export_groups = self.getActionsTxt()
-
+        
         if animationList is not None:  # assume all is controled by a handmade Actions.txt
             _fps = float(bpy.context.scene.render.fps)
 
@@ -488,8 +488,12 @@ class Skeleton(object):
             else:
                 arm2 = arm
                 
-            arm_previous_action = arm.animation_data.action
-            arm2_previous_action = arm2.animation_data.action
+            try:
+                arm_previous_action = arm.animation_data.action
+                arm2_previous_action = arm2.animation_data.action
+            except AttributeError:
+                arm_previous_action = None
+                arm2_previous_action = None
 
             # Export all animations
             for animation in animationList:
@@ -636,8 +640,10 @@ class Skeleton(object):
                     # Set the frame
                     bpy.context.scene.frame_set(frame)
                     bpy.context.scene.frame_set(frame)
-            arm.animation_data.action = arm_previous_action
-            arm2.animation_data.action = arm2_previous_action
+            
+            if arm_previous_action is not None:
+                arm.animation_data.action = arm_previous_action
+                arm2.animation_data.action = arm2_previous_action
 
         elif not arm.animation_data or (arm.animation_data and not arm.animation_data.nla_tracks):
                 # write a single animation from the blender timeline
