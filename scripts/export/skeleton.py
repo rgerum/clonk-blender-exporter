@@ -1,13 +1,11 @@
 import bpy
 import mathutils
-#from .. import config
-from report import Report
-from xml_simple import RDocument
-#from .. import util
+Report = bpy.data.texts["report.py"].as_module().Report
+RDocument = bpy.data.texts["xml_simple.py"].as_module().RDocument
+util = bpy.data.texts["util.py"].as_module()
+config = bpy.data.texts["config.py"].as_module().config
 from os.path import join
 import re
-from config import config
-import util
 
 
 def dot_skeleton(obj, path, **kwargs):

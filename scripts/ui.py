@@ -7,7 +7,7 @@ import math
 import json
 import os
 from pathlib import Path
-from report import Report
+Report = bpy.data.texts["report.py"].as_module().Report
 import importlib
 
 def Trans_Identity():
@@ -237,13 +237,13 @@ class OBJECT_OT_Button(bpy.types.Operator):
             if len(ob.children):
                ob = ob.children[0]
                
-        import mesh
-        importlib.reload(mesh)
+        mesh = bpy.data.texts["mesh.py"].as_module()
+
         target_folder = Path(bpy.data.filepath).parent / "export"
         materials = mesh.dot_mesh(ob, target_folder, overwrite=True)
         
-        import material
-        importlib.reload(material)
+        material = bpy.data.texts["material.py"].as_module()
+
         material.writeMaterials(target_folder / "Scene.material", materials)
         Report.show()
         return{'FINISHED'}
@@ -258,10 +258,8 @@ class OBJECT_OT_Button2(bpy.types.Operator):
             if len(ob.children):
                ob = ob.children[0]
                
-        import skeleton
-        from report import Report
-        import importlib
-        importlib.reload(skeleton)
+        skeleton = bpy.data.texts["skeleton.py"].as_module()
+
         skeleton.dot_skeleton(ob, os.path.dirname(bpy.data.filepath)+"/export", overwrite=True)
         Report.show()
         return{'FINISHED'}

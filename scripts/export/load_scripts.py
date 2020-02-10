@@ -25,6 +25,8 @@ for file in filenames:
         bpy.data.texts.remove(bpy.data.texts[file])
     # and open it from the provided path
     bpy.ops.text.open(filepath=getPath(file))
+    text = bpy.data.texts[file]
+    text.filepath = getPath(file)
 
 # register the ui.py text as a module (it gets called on load of the .blend file)
 bpy.data.texts["ui.py"].use_module = True

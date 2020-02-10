@@ -18,7 +18,7 @@ def xml_convert(infile, has_uvs=False):
         if not filename.exists():
             # or in a subfolder?
             filename = Path(bpy.data.filepath).parent / "scripts/xml_converter/OgreXMLConverter.exe"
-        cmd = [filename]
+        cmd = [str(filename)]
         # if we are on Linux, try to call it with wine
         if sys.platform.startswith("linux"):
             cmd.insert(0, "wine")

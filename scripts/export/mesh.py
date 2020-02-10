@@ -1,9 +1,9 @@
 import os, time, sys, logging
 import bpy
-from report import Report
-import xml_simple as xml
-import util
-from config import config
+Report = bpy.data.texts["report.py"].as_module().Report
+xml = bpy.data.texts["xml_simple.py"].as_module()
+util = bpy.data.texts["util.py"].as_module()
+config = bpy.data.texts["config.py"].as_module()
 
 
 def dot_mesh(ob, path, force_name=None, **kwargs):
