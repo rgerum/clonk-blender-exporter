@@ -6,6 +6,7 @@ util = bpy.data.texts["util.py"].as_module()
 config = bpy.data.texts["config.py"].as_module().config
 from os.path import join
 import re
+from pathlib import Path
 
 
 def dot_skeleton(obj, path, **kwargs):
@@ -718,8 +719,11 @@ class Skeleton(object):
                         "Group": ""
                     })
             return animationList, animation_export_groups
+        
+        act_filename = act_filename.replace("//", str(Path(bpy.data.filepath).parent)+"/")
         file_exists = os.path.isfile(act_filename)
         if not file_exists:  # assume all is controlled by a handmade Actions.txt
+            print("Action.txt file not found", act_filename)
             return None, None
 
         animationList = []
