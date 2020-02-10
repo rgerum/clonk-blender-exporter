@@ -531,9 +531,9 @@ def extract_vertex_color(vcolors, vcolors_alpha, face, index):
     export = False
     if vcolors:
         k = list(face.vertices).index(index)
-        r, g, b = getattr(vcolors.data[face.index], 'color%s' % (k + 1))
+        r, g, b, _ = getattr(vcolors.data[face.index], 'color')
         if vcolors_alpha:
-            ra, ga, ba = getattr(vcolors_alpha.data[face.index], 'color%s' % (k + 1))
+            ra, ga, ba, _ = getattr(vcolors_alpha.data[face.index], 'color')
         else:
             ra = 1.0
         export = True
