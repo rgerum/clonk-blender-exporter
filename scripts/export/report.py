@@ -71,7 +71,7 @@ class ReportSingleton(object):
         return txt
 
 
-class MT_mini_report(bpy.types.Menu):
+class CLONK_MT_mini_report(bpy.types.Menu):
     bl_label = "Mini-Report | (see console for full report)"
 
     def draw(self, context):
@@ -81,6 +81,6 @@ class MT_mini_report(bpy.types.Menu):
             layout.label(text=line)
 
 
-bpy.utils.register_class(MT_mini_report)
+bpy.utils.register_class(CLONK_MT_mini_report)
 
 Report = ReportSingleton()

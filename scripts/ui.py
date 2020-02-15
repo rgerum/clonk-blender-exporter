@@ -10,6 +10,20 @@ from pathlib import Path
 Report = bpy.data.texts["report.py"].as_module().Report
 import importlib
 
+bl_info = {
+    "name": "ClonkExport",
+    "description": "Export mesh and skeleton files for OpenClonk (which mainly uses the Ogre format)",
+    "author": "Richard Gerum",
+    "version": (1, 0, "rc3"),
+    "blender": (2, 81, 0),
+    "location": "View3D > Mish > Clonk Export",
+    "warning": "", # used for warning icon and text in addons panel
+    "wiki_url": "https://github.com/rgerum/clonk-blender-exporter",
+    "tracker_url": "https://github.com/rgerum/clonk-blender-exporter/issues",
+    "support": "COMMUNITY",
+    "category": "Import-Export",
+}
+
 def Trans_Identity():
     return mathutils.Matrix()
     
@@ -131,7 +145,7 @@ class ClonkImageLoadOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     # Define this to tell 'fileselect_add' that we want a directoy
-    filepath = bpy.props.StringProperty()
+    filepath: bpy.props.StringProperty()
 
     def execute(self, context):
         mat = context.object.active_material
@@ -147,10 +161,8 @@ class ClonkImageLoadOperator(bpy.types.Operator):
         context.window_manager.fileselect_add(self)
         # Tells Blender to hang on for the slow user input
         return {'RUNNING_MODAL'}
-
-bpy.utils.register_class(ClonkImageLoadOperator)   
     
-class MaterialPanel(bpy.types.Panel):
+class CLONK_PANEL_PT_material(bpy.types.Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "material"
@@ -167,8 +179,6 @@ class MaterialPanel(bpy.types.Panel):
         row = self.layout.row()
         row.prop(mat, 'clonkTexture')
         row.operator("clonk.add_image_texture", icon="FILE_FOLDER", text="")
-
-bpy.utils.register_class(MaterialPanel)
  
 # Define an RNA prop for every object
 bpy.types.Object.clonkExportActionFile = bpy.props.StringProperty(
@@ -265,7 +275,7 @@ class OBJECT_OT_Button2(bpy.types.Operator):
         return{'FINISHED'}
  
 #    Property panel
-class ActionPanel(bpy.types.Panel):
+class CLONK_PT_action_export(bpy.types.Panel):
     bl_label = "Action Export"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -300,7 +310,7 @@ class ActionPanel(bpy.types.Panel):
             layout.prop(ob.animation_data.action, 'clonkActionStart')
             layout.prop(ob.animation_data.action, 'clonkActionEnd')
             
-class ClonkActionPanel(bpy.types.Panel):
+class CLONK_PT_action(bpy.types.Panel):
     bl_label = "Action Attach Display"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -335,7 +345,7 @@ class ClonkActionPanel(bpy.types.Panel):
             layout.prop(ob.animation_data.action, 'clonkAttachTransformation')
             layout.prop(ob.animation_data.action, 'clonkAttachAction')
             
-class ExportPanel(bpy.types.Panel):
+class CLONK_PT_export(bpy.types.Panel):
     bl_label = "Clonk Export"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -357,6 +367,9 @@ class ExportPanel(bpy.types.Panel):
         if not ob:
             return
         layout = self.layout
+        
+        layout.label(text="Clonk Exporter v"+".".join(str(s) for s in bl_info["version"]))
+        
         if ob.type == "ARMATURE":
             if len(ob.children):
                ob = ob.children[0]
@@ -384,28 +397,7 @@ def getBoneFromObject(object_name, bone_name):
     else:
         attachBone = None
     return attachMesh, attachArmature, attachBone
-    
-# Registration
-bpy.utils.register_class(OBJECT_OT_Button)
-bpy.utils.register_class(OBJECT_OT_Button2)
-bpy.utils.register_class(ActionPanel)
-bpy.utils.register_class(ClonkActionPanel)
-bpy.utils.register_class(ExportPanel)
-
-# initalize the attachHash if it is not present yet
-scene = bpy.context.scene
-try:
-    scene["attachHash"]
-except KeyError:
-    scene["attachHash"] = None
-
-# get the Armatures
-try:
-    clonkArmature = bpy.data.objects["Armature"]
-    clonkArmatureHelper = bpy.data.objects["CONTROL_body"]
-except KeyError:
-    clonkArmature = None
-    clonkArmatureHelper = None
+ 
 
 def my_handler(scene):
     # get the currently selected object
@@ -533,11 +525,6 @@ def my_handler(scene):
                 constraint.target = clonkArmature
                 constraint.subtarget = action.clonkAttachBone
 
-if scene["attachHash"] is not None:
-    scene["attachHash"] = scene["attachHash"]+" "
-if len(bpy.app.handlers.frame_change_pre):
-    bpy.app.handlers.frame_change_pre.remove(bpy.app.handlers.frame_change_pre[-1])
-bpy.app.handlers.frame_change_pre.append(my_handler)
 
 #bpy.COPY_TRANSFORMS
 
@@ -585,3 +572,51 @@ def getBonesForControl2(control):
         return ["RootB"]
     if control == "body2":
         return ["skeleton_body"]
+
+
+def register():
+           
+    # Registration
+    bpy.utils.register_class(ClonkImageLoadOperator)   
+    bpy.utils.register_class(CLONK_PANEL_PT_material)
+
+    bpy.utils.register_class(OBJECT_OT_Button)
+    bpy.utils.register_class(OBJECT_OT_Button2)
+    bpy.utils.register_class(CLONK_PT_action_export)
+    bpy.utils.register_class(CLONK_PT_action)
+    bpy.utils.register_class(CLONK_PT_export)
+
+    # initalize the attachHash if it is not present yet
+    scene = bpy.context.scene
+    try:
+        scene["attachHash"]
+    except KeyError:
+        scene["attachHash"] = None
+
+    # get the Armatures
+    try:
+        clonkArmature = bpy.data.objects["Armature"]
+        clonkArmatureHelper = bpy.data.objects["CONTROL_body"]
+    except KeyError:
+        clonkArmature = None
+        clonkArmatureHelper = None
+            
+    if scene["attachHash"] is not None:
+        scene["attachHash"] = scene["attachHash"]+" "
+    if len(bpy.app.handlers.frame_change_pre):
+        bpy.app.handlers.frame_change_pre.remove(bpy.app.handlers.frame_change_pre[-1])
+    bpy.app.handlers.frame_change_pre.append(my_handler)
+
+
+def unregister():
+    bpy.utils.unregister_class(ClonkImageLoadOperator)
+    bpy.utils.unregister_class(CLONK_PANEL_PT_material)
+    
+    bpy.utils.unregister_class(OBJECT_OT_Button)
+    bpy.utils.unregister_class(OBJECT_OT_Button2)
+    bpy.utils.unregister_class(CLONK_PT_action_export)
+    bpy.utils.unregister_class(CLONK_PT_action)
+    bpy.utils.unregister_class(CLONK_PT_export)
+
+if __name__ == "__main__":
+    register()
